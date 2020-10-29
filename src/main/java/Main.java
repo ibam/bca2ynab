@@ -1,5 +1,5 @@
-import io.github.ibam.bca2ynab.BCAProcessor;
-import io.github.ibam.bca2ynab.CSVWriter;
+import io.github.ibam.bca2ynab.processors.BCACSVProcessor;
+import io.github.ibam.bca2ynab.writers.YnabCSVWriter;
 import io.github.ibam.bca2ynab.models.BCAStatement;
 import io.github.ibam.bca2ynab.models.BCATransaction;
 
@@ -12,7 +12,8 @@ public class Main {
     public static void main(String[] args) {
         try {
             final List<String> csvLines = Files.readAllLines(Path.of("files/input.csv"));
-            final BCAStatement bcaStatement = BCAProcessor.parse(csvLines);
+            final BCACSVProcessor bcaProcessor = new BCACSVProcessor();
+            final BCAStatement bcaStatement = bcaProcessor.parse(csvLines);
 
             final List<BCATransaction> bcaTransactions = bcaStatement.getTransactions();
 
@@ -23,7 +24,7 @@ public class Main {
             System.out.println("Total Inflow (" + bcaStatement.getInflowCount() + ") = " + String.format("%.2f", bcaStatement.getTotalInflow()));
             System.out.println("Total Outflow (" + bcaStatement.getOutflowCount() + ") = " + String.format("%.2f", bcaStatement.getTotalOutflow()));
 
-            CSVWriter.write(bcaStatement, "files/output.csv");
+            YnabCSVWriter.write(bcaStatement, "files/output.csv");
 
         } catch (IOException e) {
             e.printStackTrace();
